@@ -1,0 +1,25 @@
+
+docker build -t spring-boot-docker .
+
+docker image ls
+
+docker run -p 9090:8080 spring-boot-docker
+(
+    docker run: The primary command to create and start a new container from a specified image.
+    -p 9090:8080: This is the port mapping flag (short for --publish).
+    9090 (Host Port): The port you use on your computer to access the application (e.g., in a browser at http://localhost:9090).
+    8080 (Container Port): The port the Spring Boot application is actually listening on inside the container. 8080 is the default port for most Spring Boot web applications.
+    spring-boot-docker: The name (or tag) of the Docker image you want to run.
+)
+
+docker inspect <container id> | grep "IPAddress"
+
+api access url :- http://127.0.0.1:9090/message
+
+    in mac os  accessing  using container port doesn't work...is it true?
+    Yes, that is true. On macOS, you cannot access a Docker container using its internal "container port" (8080 in your example) unless you have mapped it to a host port (9090).
+
+    Why this happens on Mac
+    Virtualization Barrier: Unlike Linux, where Docker runs natively on the kernel, Docker on macOS runs inside a lightweight Linux Virtual Machine.
+    No Direct Bridge: The internal Docker bridge network (often called docker0) exists only inside that virtual machine. Your Mac's host network cannot "see" or route traffic directly to the container's internal IP address or ports.
+    Isolation: Because the container is isolated within the VM, the only way for your Mac to communicate with it is through the port mapping defined in your command.
