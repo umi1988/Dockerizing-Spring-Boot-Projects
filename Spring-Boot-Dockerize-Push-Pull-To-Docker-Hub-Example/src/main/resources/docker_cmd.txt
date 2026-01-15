@@ -1,0 +1,25 @@
+
+docker build -t spring-boot-docker .
+
+docker image ls
+
+docker run -p 9090:8080 spring-boot-docker
+
+docker inspect <container id> | grep "IPAddress"
+
+api access url :- http://127.0.0.1:9090/message
+
+
+Push and Pull Docker created docker image to Docker Hub:
+
+1> docker login (login credentials for docker account)
+
+2> docker tag spring-boot-docker learn1988/spring-boot-docker
+
+3> docker image ls
+
+4> docker push learn1988/spring-boot-docker:latest
+
+5> docker pull learn1988/spring-boot-docker:latest
+
+6> docker run -p 9090:8080 learn1988/spring-boot-docker:latest
