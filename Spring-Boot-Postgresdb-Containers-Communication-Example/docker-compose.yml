@@ -1,0 +1,42 @@
+services:
+  postgres-db:
+    image: postgres:16  # Pinning to version 16 is recommended in 2026
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      # These variables are required to initialize the DB
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydatabase
+    networks:
+      - app-network
+    healthcheck:
+      # 'pg_isready' is the high-performance standard for Postgres health checks
+      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  springboot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: springboot-app
+    ports:
+      - "8080:8080"
+    environment:
+      # JDBC URL format for Spring Boot
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/mydatabase
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
